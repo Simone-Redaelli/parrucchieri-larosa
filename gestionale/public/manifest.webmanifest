@@ -1,0 +1,21 @@
+{
+  "name": "Larosa Gestionale",
+  "short_name": "Larosa",
+  "description": "Agenda, prenotazioni e clienti di Parrucchieri Larosa",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0F0D0B",
+  "theme_color": "#0F0D0B",
+  "lang": "it",
+  "icons": [
+    { "src": "icona-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icona-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icona-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Agenda", "url": "./#/agenda" },
+    { "name": "Richieste", "url": "./#/prenotazioni" }
+  ]
+}

@@ -1,0 +1,6 @@
+parrucchierilarosa.it, www.parrucchierilarosa.it {
+	encode zstd gzip
+	reverse_proxy localhost:3000 {
+		flush_interval -1
+	}
+}

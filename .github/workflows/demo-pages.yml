@@ -1,0 +1,38 @@
+name: Demo su GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths: ['sito/**', 'condivisi/**', '.github/workflows/demo-pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build della demo
+        working-directory: sito
+        env:
+          VITE_DEMO: '1'
+          VITE_BASE: /${{ github.event.repository.name }}/
+        run: |
+          npm install --no-audit --no-fund
+          npx vite build --outDir ../demo-pages
+          cp ../demo-pages/index.html ../demo-pages/404.html
+          touch ../demo-pages/.nojekyll
+      - name: Pubblica sul branch gh-pages
+        run: |
+          cd demo-pages
+          git init -q -b gh-pages
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git commit -qm "Demo del sito"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" gh-pages

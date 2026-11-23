@@ -1,0 +1,14 @@
+{
+  "name": "parrucchieri-larosa",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sito, prenotazioni online, gestionale web, app telefono e app desktop di Parrucchieri Larosa",
+  "scripts": {
+    "installa": "npm --prefix server install && npm --prefix sito install && npm --prefix gestionale install",
+    "build": "npm --prefix sito run build && npm --prefix gestionale run build",
+    "start": "npm --prefix server start",
+    "demo": "npm --prefix server run demo --",
+    "desktop": "npm --prefix desktop install && npm --prefix desktop start"
+  },
+  "engines": { "node": ">=22.13" }
+}

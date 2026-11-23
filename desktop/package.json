@@ -1,0 +1,87 @@
+{
+  "name": "larosa-gestionale-desktop",
+  "productName": "Larosa Gestionale",
+  "version": "1.0.0",
+  "description": "Gestionale di Parrucchieri Larosa per Windows, Mac e Linux",
+  "author": "Parrucchieri Larosa",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "prepara": "node prepara.js",
+    "start": "npm run prepara && electron .",
+    "dist:win": "npm run prepara && electron-builder --win --publish never",
+    "dist:mac": "npm run prepara && electron-builder --mac --publish never",
+    "dist:linux": "npm run prepara && electron-builder --linux --publish never",
+    "dist:win-zip": "npm run prepara && electron-builder --win zip --publish never -c.win.signAndEditExecutable=false"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "png2icons": "^2.0.1",
+    "resedit": "^2.0.3"
+  },
+  "build": {
+    "appId": "it.parrucchierilarosa.gestionale",
+    "productName": "Larosa Gestionale",
+    "copyright": "Parrucchieri Larosa",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "app/**/*",
+      "build/tray-*.png"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Larosa Gestionale",
+      "installerLanguages": [
+        "it_IT"
+      ],
+      "language": "1040"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "category": "public.app-category.business",
+      "icon": "build/icon.png"
+    },
+    "dmg": {
+      "title": "Larosa Gestionale"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Office",
+      "icon": "build/icon.png",
+      "maintainer": "Parrucchieri Larosa <larosabylagari@gmail.com>",
+      "synopsis": "Gestionale del salone"
+    },
+    "publish": [],
+    "afterPack": "./icona-win.js"
+  }
+}

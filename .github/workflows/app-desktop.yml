@@ -1,0 +1,46 @@
+name: App desktop
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            comando: dist:win
+          - os: macos-latest
+            comando: dist:mac
+          - os: ubuntu-latest
+            comando: dist:linux
+    runs-on: ${{ matrix.os }}
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build del gestionale
+        working-directory: gestionale
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+      - name: Build dell'app
+        working-directory: desktop
+        run: |
+          npm install --no-audit --no-fund
+          npm run ${{ matrix.comando }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: larosa-gestionale-${{ matrix.os }}
+          path: |
+            desktop/dist/*.exe
+            desktop/dist/*.dmg
+            desktop/dist/*.AppImage
+            desktop/dist/*.deb
+          if-no-files-found: error
