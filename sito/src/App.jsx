@@ -130,6 +130,7 @@ function Piede() {
             {info?.salone.instagram && <><a href={info.salone.instagram} target="_blank" rel="noreferrer">Instagram</a><br /></>}
             {info?.salone.facebook && <><a href={info.salone.facebook} target="_blank" rel="noreferrer">Facebook</a><br /></>}
             <Link to="/prenotazione">Gestisci una prenotazione</Link>
+            {DEMO && <><br /><a href={`${import.meta.env.BASE_URL}gestionale/`}>Prova il gestionale (demo)</a></>}
           </p>
         </div>
       </div>

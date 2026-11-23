@@ -617,3 +617,6 @@ fieldset:disabled { opacity: .75; }
   .riga-pren__corpo { flex-basis: 100%; }
   .riga-pren__azioni { padding-left: 76px; }
 }
+.demo-nota { display: grid; gap: 4px; padding: 12px; border-radius: 12px; background: rgba(212, 173, 94, .1); border: 1px solid rgba(212, 173, 94, .25); font-size: .8rem; color: var(--lato-muto); }
+.demo-nota strong { color: var(--oro); font-size: .85rem; }
+.demo-nota .link { color: var(--lato-testo); justify-self: start; font-size: .8rem; }

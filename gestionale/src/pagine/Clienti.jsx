@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, UserPlus, Download, Users } from 'lucide-react';
 import { useApp } from '../App.jsx';
-import { get, post, euro, dataCorta, nomeCompleto, server, token, relativo } from '../api.js';
+import { get, post, euro, dataCorta, nomeCompleto, server, token, relativo, DEMO } from '../api.js';
 import { useCarica, Rotella, Vuoto, Segmenti, Modale, Campo, useToast, Avatar } from '../ui.jsx';
 
 export default function Clienti() {
@@ -21,7 +21,7 @@ export default function Clienti() {
       <header className="pagina__testa">
         <div><h1>Clienti</h1><p className="pagina__sotto">{dati ? `${dati.length} ${dati.length === 1 ? 'cliente' : 'clienti'}` : ' '}. Si aggiungono da soli quando prenotano dal sito.</p></div>
         <div className="pagina__azioni">
-          {titolare && <a className="btn" href={`${server()}/api/admin/esporta/clienti.csv?token=${encodeURIComponent(token())}`}><Download size={17} /> Esporta Excel</a>}
+          {titolare && !DEMO && <a className="btn" href={`${server()}/api/admin/esporta/clienti.csv?token=${encodeURIComponent(token())}`}><Download size={17} /> Esporta Excel</a>}
           <button className="btn btn--primario" onClick={() => setNuovo(true)}><UserPlus size={17} /> Nuovo cliente</button>
         </div>
       </header>

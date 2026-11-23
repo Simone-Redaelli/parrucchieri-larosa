@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Bell, Globe, MessageCircle, Palette, KeyRound, Users, Smartphone, Trash2, Plus, Monitor } from 'lucide-react';
 import { useApp } from '../App.jsx';
-import { api, get, post, patch, del, desktop, server, impostaServer, salvaToken } from '../api.js';
+import { DEMO, api, get, post, patch, del, desktop, server, impostaServer, salvaToken } from '../api.js';
 import { Campo, Interruttore, Segmenti, useToast, useConferma, Modale } from '../ui.jsx';
 
 function base64ToUint8(b) {
@@ -91,7 +91,7 @@ function Notifiche() {
   const [suono, setSuono] = useState(localStorage.getItem('larosa-suono') !== '0');
   const [permesso, setPermesso] = useState('Notification' in window ? Notification.permission : 'non-supportato');
   const [push, setPush] = useState(null);
-  const pushPossibile = !desktop && 'serviceWorker' in navigator && 'PushManager' in window && location.protocol === 'https:';
+  const pushPossibile = !DEMO && !desktop && 'serviceWorker' in navigator && 'PushManager' in window && location.protocol === 'https:';
 
   useEffect(() => {
     if (!pushPossibile) return;
@@ -127,7 +127,7 @@ function Notifiche() {
       ) : desktop ? (
         <Interruttore attivo={permesso === 'granted'} onCambia={async v => v && setPermesso(await Notification.requestPermission())} etichetta="Notifiche di sistema" descrizione="L’app resta attiva nell’area di notifica anche quando chiudi la finestra." />
       ) : (
-        <p className="muto">Le notifiche con l’app chiusa funzionano quando il gestionale è aperto dall’indirizzo https del salone.</p>
+        <p className="muto">{DEMO ? 'Nella versione vera arrivano le notifiche sul telefono anche con l’app chiusa.' : 'Le notifiche con l’app chiusa funzionano quando il gestionale è aperto dall’indirizzo https del salone.'}</p>
       )}
     </section>
   );

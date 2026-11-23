@@ -1,7 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Routes, Route, NavLink, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { CalendarDays, LayoutDashboard, Inbox, Users, Scissors, UserRound, MapPin, Settings, Plus, LogOut, Moon, Sun, Menu, Bell } from 'lucide-react';
-import { get, salvaToken, token, quandoScade, server, desktop, dataLunga, oggi, nomeCompleto } from './api.js';
+import { get, salvaToken, token, quandoScade, server, desktop, dataLunga, oggi, nomeCompleto, DEMO } from './api.js';
+import { suEvento, avviaSimulazione, ricominciaDemo } from './demo.js';
 import { Rosa, Toasts, useToast, Conferme, Rotella } from './ui.jsx';
 import Accesso from './pagine/Accesso.jsx';
 import Oggi from './pagine/Oggi.jsx';
@@ -37,7 +38,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if ('serviceWorker' in navigator && location.protocol.startsWith('http') && !desktop) navigator.serviceWorker.register('./sw.js').catch(() => {});
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http') && !desktop && !DEMO) navigator.serviceWorker.register('./sw.js').catch(() => {});
   }, []);
 
   if (!verificato) return <div className="schermo-carica"><Rosa className="schermo-carica__rosa" oro /></div>;
@@ -95,28 +96,34 @@ function Guscio({ utente, esci, tema, setTema }) {
   useEffect(() => setMenu(false), [loc.pathname]);
 
   useEffect(() => {
+    const gestisci = (tipo, d) => {
+      if (tipo === 'config') { caricaCfg().catch(() => {}); return; }
+      setVersione(v => v + 1);
+      contaRichieste();
+      if (d.tipo === 'nuova' && d.da !== utente.nome) {
+        const p = d.prenotazione;
+        const titolo = p.stato === 'in_attesa' ? 'Nuova richiesta dal sito' : 'Nuova prenotazione';
+        const testo = `${nomeCompleto(p)} · ${dataLunga(p.data)} ore ${p.ora}`;
+        if (localStorage.getItem('larosa-suono') !== '0') suono();
+        toast(testo, { titolo, tipo: 'nuova', durata: 9000, azione: { testo: 'Apri', fn: () => setAperta(p.id) } });
+        if (!DEMO && 'Notification' in window && Notification.permission === 'granted' && (document.hidden || desktop)) {
+          const n = new Notification(titolo, { body: testo + `\n${p.servizi.map(s => s.nome).join(', ')}`, tag: p.codice, icon: 'icona-192.png' });
+          n.onclick = () => { window.focus(); window.larosaDesktop?.mostra?.(); setAperta(p.id); };
+        }
+      }
+      if (d.tipo === 'aggiornata' && d.da === 'cliente') toast(`${nomeCompleto(d.prenotazione)} ha annullato l'appuntamento di ${dataLunga(d.prenotazione.data)}`, { titolo: 'Annullamento', tipo: 'avviso', durata: 9000 });
+    };
+    if (DEMO) {
+      const stop = suEvento(gestisci);
+      avviaSimulazione();
+      return stop;
+    }
     let es, timer, chiuso = false;
     const apri = () => {
       es = new EventSource(`${server()}/api/admin/eventi?token=${encodeURIComponent(token())}`);
       es.addEventListener('ciao', () => setOnline(true));
-      es.addEventListener('prenotazione', e => {
-        const d = JSON.parse(e.data);
-        setVersione(v => v + 1);
-        contaRichieste();
-        if (d.tipo === 'nuova' && d.da !== utente.nome) {
-          const p = d.prenotazione;
-          const titolo = p.stato === 'in_attesa' ? 'Nuova richiesta' : 'Nuova prenotazione';
-          const testo = `${nomeCompleto(p)} · ${dataLunga(p.data)} ore ${p.ora}`;
-          if (localStorage.getItem('larosa-suono') !== '0') suono();
-          toast(testo, { titolo, tipo: 'nuova', durata: 9000, azione: { testo: 'Apri', fn: () => setAperta(p.id) } });
-          if ('Notification' in window && Notification.permission === 'granted' && (document.hidden || desktop)) {
-            const n = new Notification(titolo, { body: testo + `\n${p.servizi.map(s => s.nome).join(', ')}`, tag: p.codice, icon: 'icona-192.png' });
-            n.onclick = () => { window.focus(); window.larosaDesktop?.mostra?.(); setAperta(p.id); };
-          }
-        }
-        if (d.tipo === 'aggiornata' && d.da === 'cliente') toast(`${nomeCompleto(d.prenotazione)} ha annullato l'appuntamento di ${dataLunga(d.prenotazione.data)}`, { titolo: 'Annullamento', tipo: 'avviso', durata: 9000 });
-      });
-      es.addEventListener('config', () => caricaCfg().catch(() => {}));
+      es.addEventListener('prenotazione', e => gestisci('prenotazione', JSON.parse(e.data)));
+      es.addEventListener('config', () => gestisci('config'));
       es.onerror = () => {
         setOnline(false); es.close();
         if (!chiuso) timer = setTimeout(apri, 4000);
@@ -165,6 +172,13 @@ function Guscio({ utente, esci, tema, setTema }) {
             ))}
           </nav>
           <div className="lato__fondo">
+            {DEMO && (
+              <div className="demo-nota">
+                <strong>Versione demo</strong>
+                <span>Dati finti. Le prenotazioni fatte sul sito demo, nello stesso browser, arrivano qui in tempo reale.</span>
+                <button className="link" onClick={() => { ricominciaDemo(); location.reload(); }}>Ricomincia da capo</button>
+              </div>
+            )}
             <div className={`connessione ${online ? '' : 'connessione--off'}`} title={online ? 'Aggiornamenti in tempo reale attivi' : 'Riconnessione in corso'}>
               <i />{online ? 'In tempo reale' : 'Riconnessione…'}
             </div>

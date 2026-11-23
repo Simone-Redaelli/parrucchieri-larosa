@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { get, post, serveServer, server, impostaServer } from '../api.js';
+import { get, post, serveServer, server, impostaServer, DEMO } from '../api.js';
 import { Rosa, Campo } from '../ui.jsx';
 
 export default function Accesso({ onEntra }) {
-  const chiediServer = serveServer();
+  const chiediServer = serveServer() && !DEMO;
   const [indirizzo, setIndirizzo] = useState(server());
   const [stato, setStato] = useState(null);
-  const [f, setF] = useState({ nome: '', email: '', password: '' });
+  const [f, setF] = useState(DEMO ? { nome: '', email: 'demo@larosa.it', password: 'demo1234' } : { nome: '', email: '', password: '' });
   const [errore, setErrore] = useState(null);
   const [invio, setInvio] = useState(false);
 
@@ -47,7 +47,7 @@ export default function Accesso({ onEntra }) {
         <p className="accesso__sotto">
           {fase === 'setup' && 'È il primo accesso: questo account sarà il titolare e potrà aggiungere lo staff.'}
           {fase === 'server' && 'Scrivi l’indirizzo del sito del salone. Lo chiediamo solo la prima volta.'}
-          {fase === 'login' && 'Accedi al gestionale di Larosa.'}
+          {fase === 'login' && (DEMO ? 'Versione demo con dati finti: premi Accedi.' : 'Accedi al gestionale di Larosa.')}
           {fase === 'carica' && 'Mi collego al server…'}
         </p>
         {fase === 'server' && (

@@ -1,3 +1,6 @@
+import { demoApi } from './demo.js';
+
+export const DEMO = import.meta.env.VITE_DEMO === '1';
 export const desktop = typeof window !== 'undefined' && !!window.larosaDesktop;
 export const serveServer = () => desktop || !location.protocol.startsWith('http');
 
@@ -19,6 +22,7 @@ let suScaduta = () => {};
 export const quandoScade = f => { suScaduta = f; };
 
 export async function api(percorso, { metodo = 'GET', corpo } = {}) {
+  if (DEMO) return demoApi(percorso, { metodo, corpo: corpo === undefined ? undefined : JSON.parse(JSON.stringify(corpo)) });
   let r;
   try {
     r = await fetch(`${server()}/api${percorso}`, {

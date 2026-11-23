@@ -13,7 +13,10 @@ Serve **Node.js 22.13 o più recente** (il database usa `node:sqlite`, già incl
 
 ## Demo online
 
-Su GitHub Pages c'è una **versione dimostrativa** del sito: funziona tutto, ma le prenotazioni restano nel browser di chi le fa e non arrivano al salone. Si aggiorna da sola a ogni modifica della cartella `sito/`.
+Su GitHub Pages c'è una **versione dimostrativa** di sito e gestionale, con dati finti: funziona tutto, ma le modifiche restano nel browser di chi le fa e non arrivano al salone. Si aggiorna da sola a ogni modifica.
+
+- Sito: https://simone-redaelli.github.io/parrucchieri-larosa/
+- Gestionale: https://simone-redaelli.github.io/parrucchieri-larosa/gestionale/
 
 ## Provarlo sul tuo PC
 

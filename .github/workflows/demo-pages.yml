@@ -3,7 +3,7 @@ name: Demo su GitHub Pages
 on:
   push:
     branches: [main]
-    paths: ['sito/**', 'condivisi/**', '.github/workflows/demo-pages.yml']
+    paths: ['sito/**', 'gestionale/**', 'condivisi/**', '.github/workflows/demo-pages.yml']
   workflow_dispatch:
 
 permissions:
@@ -27,6 +27,13 @@ jobs:
           npx vite build --outDir ../demo-pages
           cp ../demo-pages/index.html ../demo-pages/404.html
           touch ../demo-pages/.nojekyll
+      - name: Build della demo del gestionale
+        working-directory: gestionale
+        env:
+          VITE_DEMO: '1'
+        run: |
+          npm install --no-audit --no-fund
+          npx vite build --outDir ../demo-pages/gestionale
       - name: Pubblica sul branch gh-pages
         run: |
           cd demo-pages
